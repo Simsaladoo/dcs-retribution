@@ -76,6 +76,98 @@ in progress, and done. Items in the Done column are in the
 [preview build](https://github.com/dcs-retribution/dcs-retribution/wiki/Preview-builds)
 for that release. Items in the To do column are planned to be added to that release.
 
+## Quick Start: Local Multiplayer Server Setup
+
+### Prerequisites
+- DCS World installed with required maps/modules (Normandy Map + WW2 Assets Pack for WW2 campaigns)
+- Python 3.11+
+- Git
+
+### 1. Clone & Install Dependencies
+```cmd
+git clone https://github.com/dcs-retribution/dcs-retribution.git
+cd dcs-retribution
+python -m venv venv
+.\venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+```
+
+### 2. Configure DCS Paths (First Run)
+```cmd
+python -m qt_ui.main
+```
+The first-run wizard will prompt for:
+- **DCS Saved Games folder** (e.g., `C:\Users\<you>\Saved Games\DCS` or `DCS.openbeta`)
+- **DCS Installation directory** (e.g., `C:\Program Files\Eagle Dynamics\DCS World`)
+
+> Retribution automatically patches `MissionScripting.lua` to allow external scripting.
+
+### 3. Enable LAN Access for Backend API
+Create `serverconfig.env` in the repo root:
+```cmd
+echo SERVER_BIND_ADDRESS=0.0.0.0 > serverconfig.env && echo SERVER_PORT=16880 >> serverconfig.env && echo CORS_ALLOW_DEBUG_SERVER=true >> serverconfig.env
+```
+
+### 4. Generate a Campaign
+
+**Normandy WW2 (Caen to Evreux, July 1944):**
+```cmd
+python -m qt_ui.main new-game "resources/campaigns/caen_to_evreux.yaml" --blue "Allies 1944" --red "Germany 1944" --date 1944-07-04 --auto-procurement
+```
+
+**Caucasus Modern (Georgia, 2008):**
+```cmd
+python -m qt_ui.main new-game "resources/campaigns/Caucasus_Multi_Georgia.yaml" --blue "USA 2005" --red "Russia 2010" --auto-procurement
+```
+
+**Other campaigns:** See `resources/campaigns/*.yaml` for available theaters and factions.
+
+### 5. Run the Campaign Manager
+```cmd
+python -m qt_ui.main
+```
+- **Campaign → Load Campaign** → select your save
+- Plan turns, assign flights, purchase units
+- Click **Generate Mission** → saves `.miz` to `%LOCALAPPDATA%\DCSRetribution\Missions\`
+
+---
+
+### Hosting Multiplayer Missions
+
+1. **Install DCS Dedicated Server** (separate from client):
+   ```cmd
+   steamcmd +login anonymous +app_update 1048720 validate +quit
+   ```
+
+2. **Copy generated mission** to server's `Missions/` folder
+
+3. **Patch MissionScripting.lua** on dedicated server:
+   ```cmd
+   copy resources\scripts\MissionScripting.lua "DCS_SERVER\Scripts\MissionScripting.lua"
+   ```
+
+4. **Start dedicated server:**
+   ```cmd
+   DCS_server.exe --mission="Missions\your_mission.miz" --webgui --port=10308
+   ```
+
+5. **Connect clients** via DCS Multiplayer browser
+
+---
+
+### Turn-Based Workflow
+| Step | Action |
+|------|--------|
+| 1 | Players fly mission on DCS server |
+| 2 | Mission ends (land/RTB) |
+| 3 | Retribution UI: **Pass Turn** → processes results |
+| 4 | **Generate Mission** for next turn |
+| 5 | Copy new `.miz` to dedicated server |
+| 6 | Restart DCS server with new mission |
+| 7 | Repeat |
+
+---
+
 ## Resources
 
 Tutorials, contributors and developer's guides are available in the project's
