@@ -88,7 +88,7 @@ for that release. Items in the To do column are planned to be added to that rele
 git clone https://github.com/dcs-retribution/dcs-retribution.git
 cd dcs-retribution
 python -m venv venv
-.\venv\Scripts\Activate.ps1
+venv\Scripts\activate.bat
 pip install -r requirements.txt
 ```
 
@@ -167,6 +167,13 @@ python -m qt_ui.main
 | 7 | Repeat |
 
 ---
+
+### One-Liner (After Initial Setup)
+```cmd
+venv\Scripts\activate.bat && python -m qt_ui.main new-game "resources/campaigns/caen_to_evreux.yaml" --blue "Allies 1944" --red "Germany 1944" --date 1944-07-04 --auto-procurement && python -m qt_ui.main
+```
+
+> **Required DCS Modules:** Normandy Map + WW2 Assets Pack (or use `"Allies 1944 (Free)"` / `"Germany 1944 (Free)"` without the paid pack).
 
 ## Resources
 
