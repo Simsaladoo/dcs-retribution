@@ -90,6 +90,11 @@ cd dcs-retribution
 python -m venv venv
 venv\Scripts\activate.bat
 pip install -r requirements.txt
+
+REM Install React dependencies (required for --dev mode map)
+cd client
+npm install
+cd ..
 ```
 
 ### 2. Configure DCS Paths (First Run)
@@ -123,12 +128,32 @@ python -m qt_ui.main new-game "resources/campaigns/Caucasus_Multi_Georgia.yaml" 
 **Other campaigns:** See `resources/campaigns/*.yaml` for available theaters and factions.
 
 ### 5. Run the Campaign Manager
+
+**Option A: With React Dev Server (live reload, easier development)**
 ```cmd
+# Terminal 1: Start React dev server
+cd client
+npm start
+
+# Terminal 2: Run Retribution with --dev
+venv\Scripts\activate.bat
+python -m qt_ui.main --dev
+```
+
+**Option B: Built Client (no dev server needed)**
+```cmd
+cd client
+npm install
+npm run build
+venv\Scripts\activate.bat
 python -m qt_ui.main
 ```
+
 - **Campaign → Load Campaign** → select your save
 - Plan turns, assign flights, purchase units
 - Click **Generate Mission** → saves `.miz` to `%LOCALAPPDATA%\DCSRetribution\Missions\`
+
+> The map is a React web app embedded in Qt. `--dev` connects to `http://localhost:3000`; without `--dev` it loads `client/build/index.html`.
 
 ---
 
